@@ -5,15 +5,22 @@
 //! # use std::error::Error;
 //! # use vec_storage_reuse::VecStorageForReuse;
 //! #
-//! # struct Stream;
+//! # struct Stream {
+//! #     n_runs: usize
+//! # }
 //! #
 //! # impl Stream {
 //! #     fn new() -> Self {
-//! #         Stream
+//! #         Stream { n_runs: 3 }
 //! #     }
 //! #
 //! #     fn next(&mut self) -> Option<&[u8]> {
-//! #         Some(&b"hoge"[..])
+//! #         if self.n_runs == 0 {
+//! #             None
+//! #         } else {
+//! #             self.n_runs -= 1;
+//! #             Some(&b"hoge"[..])
+//! #         }
 //! #     }
 //! # }
 //! #
@@ -26,11 +33,12 @@
 //! # }
 //! #
 //! # fn deserialize<'a>(input: &'a [u8], output: &mut Vec<Object<'a>>) -> Result<(), Box<dyn Error>> {
+//! #     assert!(output.is_empty());
 //! #     output.push(Object { reference: input });
 //! #     Ok(())
 //! # }
 //! #
-//! # fn processor() -> Result<(), Box<dyn Error>> {
+//! # fn main() -> Result<(), Box<dyn Error>> {
 //! #    let mut stream = Stream::new();
 //! #    
 //!     let mut objects_storage: VecStorageForReuse<Object<'static>> = VecStorageForReuse::new();
