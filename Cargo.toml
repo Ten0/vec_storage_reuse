@@ -2,8 +2,10 @@
 name = "vec_storage_reuse"
 version = "0.1.0"
 edition = "2018"
+description = "Provides an API to reuse a `Vec`'s allocation"
 authors = ["Thomas BESSOU <thomas.bessou@hotmail.fr>"]
 repository = "https://github.com/Ten0/vec_storage_reuse"
+license = "LGPL-3.0-only"
 
 [dependencies]
 recycle_vec = "1"
