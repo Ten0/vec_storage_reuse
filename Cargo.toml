@@ -1,0 +1,9 @@
+[package]
+name = "vec_storage_reuse"
+version = "0.1.0"
+edition = "2018"
+authors = ["Thomas BESSOU <thomas.bessou@hotmail.fr>"]
+repository = "https://github.com/Ten0/vec_storage_reuse"
+
+[dependencies]
+recycle_vec = "1"
