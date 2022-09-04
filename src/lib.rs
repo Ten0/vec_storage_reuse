@@ -48,9 +48,13 @@
 //! ```
 //!
 //! ### Credits:
-//! This crate delegates the actual unsafe functionality to the `recycle_vec` crate, and just provides
+//! This crate delegates most of the unsafe functionality to the `recycle_vec` crate, and just provides
 //! an interface that abstracts the swapping with the container through `Drop`, so that one can never
 //! forget to swap back the temporary object with the storage
+//!
+//! "Most of unsafe" because we still implement `Send`/`Sync` on `VecStorageForReuse` regardless of the
+//! inner type.
+//! This is safe because any `Vec` stored in this structure is *always* empty.
 
 extern crate recycle_vec;
 
@@ -122,7 +126,8 @@ impl<S> VecStorageForReuse<S> {
         VecStorageReuse::new(&mut self.inner)
     }
 
-    pub fn from_vec(vec_to_use_as_storage: Vec<S>) -> Self {
+    pub fn from_vec(mut vec_to_use_as_storage: Vec<S>) -> Self {
+        vec_to_use_as_storage.clear();
         Self {
             inner: vec_to_use_as_storage,
         }
@@ -132,3 +137,10 @@ impl<S> VecStorageForReuse<S> {
         self.inner
     }
 }
+
+// These impls are useful for roaming around with a `VecStorageForReuse<*const T>` to reuse as a `Vec<&'a T>`
+
+/// Safety: inner Vec is always empty
+unsafe impl<S> Send for VecStorageForReuse<S> {}
+/// Safety: inner Vec is always empty
+unsafe impl<S> Sync for VecStorageForReuse<S> {}
